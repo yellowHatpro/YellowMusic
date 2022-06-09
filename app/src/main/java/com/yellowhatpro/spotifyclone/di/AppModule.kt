@@ -5,6 +5,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.yellowhatpro.spotifyclone.R
+import com.yellowhatpro.spotifyclone.exoplayer.MusicServiceConnection
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,4 +25,9 @@ object AppModule {
             .error(R.drawable.common_full_open_on_phone)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
     )
+
+    @Singleton
+    @Provides
+    fun providesMusicServiceContext(context: Context
+    ) = MusicServiceConnection(context)
 }
