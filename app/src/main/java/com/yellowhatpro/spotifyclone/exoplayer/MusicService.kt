@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.media.MediaBrowserServiceCompat
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -23,7 +24,7 @@ class MusicService : MediaBrowserServiceCompat() {
     lateinit var dataSourceFactory : DefaultDataSourceFactory
 
     @Inject
-    lateinit var exoPlayer : SimpleExoPlayer
+    lateinit var exoPlayer : ExoPlayer
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
