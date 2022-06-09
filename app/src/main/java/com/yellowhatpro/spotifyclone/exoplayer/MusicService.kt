@@ -3,12 +3,14 @@ package com.yellowhatpro.spotifyclone.exoplayer
 import android.app.PendingIntent
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.media.MediaBrowserServiceCompat
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.yellowhatpro.spotifyclone.exoplayer.callbacks.MusicPlaybackPreparer
+import com.yellowhatpro.spotifyclone.exoplayer.callbacks.MusicPlayerEventListener
 import com.yellowhatpro.spotifyclone.exoplayer.callbacks.MusicPlayerNotificationListener
 import com.yellowhatpro.spotifyclone.other.Constants.SERVICE_TAG
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,6 +29,9 @@ class MusicService : MediaBrowserServiceCompat() {
     @Inject
     lateinit var exoPlayer : ExoPlayer
 
+    @Inject
+    lateinit var localMusicSource: LocalMusicSource
+
     private lateinit var musicNotificationManager: MusicNotificationManager
 
     private val serviceJob = Job()
@@ -36,6 +41,8 @@ class MusicService : MediaBrowserServiceCompat() {
     private lateinit var mediaSessionConnector : MediaSessionConnector
 
     var isForegroundService = false
+
+    private var currentSong: MediaMetadataCompat? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -49,10 +56,22 @@ class MusicService : MediaBrowserServiceCompat() {
         sessionToken = mediaSession.sessionToken
 
         musicNotificationManager = MusicNotificationManager(this, mediaSession.sessionToken, MusicPlayerNotificationListener(this)){
-            
+
         }
+        val musicPlaybackPreparer = MusicPlaybackPreparer(localMusicSource) {
+            currentSong = it
+            preparePlayer(
+                localMusicSource.songs,
+                it,
+                true
+            )
+        }
+
         mediaSessionConnector = MediaSessionConnector(mediaSession)
+        mediaSessionConnector.setPlaybackPreparer(musicPlaybackPreparer)
         mediaSessionConnector.setPlayer(exoPlayer)
+        exoPlayer.addListener(MusicPlayerEventListener(this))
+        musicNotificationManager.showNotification(exoPlayer)
     }
     override fun onGetRoot(
         clientPackageName: String,
@@ -72,5 +91,15 @@ class MusicService : MediaBrowserServiceCompat() {
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
+    }
+    private fun preparePlayer(
+        songs: List<MediaMetadataCompat>,
+        itemToPlay: MediaMetadataCompat?,
+        playNow: Boolean
+    ){
+        val currentSongIndex = if (currentSong == null) 0 else songs.indexOf(itemToPlay)
+        exoPlayer.prepare(localMusicSource.asMediaSource(dataSourceFactory))
+        exoPlayer.seekTo(currentSongIndex,0L)
+        exoPlayer.playWhenReady = playNow
     }
 }
