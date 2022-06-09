@@ -16,15 +16,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class LocalMusicSource @Inject constructor(
-    private val musicRepository: SongRepository
-) {
 
-    var songs = emptyList<MediaMetadataCompat>()
+class LocalMusicSource @Inject constructor(private val songRepository: SongRepository): MusicSource<MediaMetadataCompat>  {
+
+
+    override var songs = emptyList<MediaMetadataCompat>()
 
     suspend fun fetchMediaData() = withContext(Dispatchers.IO) {
         state = STATE_INITIALIZING
-        val listOfAllSongs = musicRepository.fetchSongs()
+        val listOfAllSongs = songRepository.fetchSongs()
         songs = listOfAllSongs.map { song->
             Builder()
                 .putString(METADATA_KEY_ARTIST, song.artist)
@@ -36,7 +36,7 @@ class LocalMusicSource @Inject constructor(
         state = STATE_INITIALIZED
     }
 
-    fun asMediaSource(dataSourceFactory: DefaultDataSourceFactory) : ConcatenatingMediaSource{
+    override fun asMediaSource(dataSourceFactory: DefaultDataSourceFactory) : ConcatenatingMediaSource{
         val concatenatingMediaSource = ConcatenatingMediaSource()
         songs.forEach{ song ->
             val mediaItem = MediaItem.fromUri(song.getString(METADATA_KEY_MEDIA_URI))
@@ -47,7 +47,7 @@ class LocalMusicSource @Inject constructor(
         return concatenatingMediaSource
     }
 
-    fun asMediaItem() = songs.map { song ->
+    override fun asMediaItem() = songs.map { song ->
         val mediaUri = song.getString(METADATA_KEY_MEDIA_URI) ?: "null"
         val desc = MediaDescriptionCompat.Builder()
             .setMediaUri(mediaUri.toUri())
@@ -73,7 +73,7 @@ class LocalMusicSource @Inject constructor(
                 field = value
             }
         }
-    fun whenReady(action: (Boolean)-> Unit):Boolean {
+    override fun whenReady(action: (Boolean)-> Unit):Boolean {
         return if (state == STATE_CREATED || state == STATE_INITIALIZING){
             onReadyListeners += action
             false

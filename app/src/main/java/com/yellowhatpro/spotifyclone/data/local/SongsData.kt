@@ -5,12 +5,11 @@ import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
 import com.yellowhatpro.spotifyclone.data.entities.Song
-import javax.inject.Inject
 
-class SongRepositoryImpl @Inject constructor(private val context: Context): SongRepository {
+class SongsData (private val context: Context) {
 
     private val songs = mutableListOf<Song>()
-    override suspend fun fetchSongs(): List<Song> {
+    suspend fun fetchSongs(): List<Song> {
         val collection =
             if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.Q){
                 MediaStore.Audio.Media.getContentUri(

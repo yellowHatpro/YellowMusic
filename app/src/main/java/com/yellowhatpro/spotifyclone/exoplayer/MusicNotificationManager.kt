@@ -62,7 +62,7 @@ class MusicNotificationManager(
             callback: PlayerNotificationManager.BitmapCallback
         ): Bitmap? {
             Glide.with(context).asBitmap()
-                .load(R.drawable.common_google_signin_btn_icon_dark)
+                .load(R.drawable.ic_launcher_background)
                 .into(object : CustomTarget<Bitmap>(){
                     override fun onResourceReady(
                         resource: Bitmap,

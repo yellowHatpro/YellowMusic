@@ -4,11 +4,10 @@ plugins {
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    id 'com.google.gms.google-services'
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.yellowhatpro.spotifyclone"
@@ -18,6 +17,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
 
     buildTypes {
@@ -30,38 +32,39 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+    }
+
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
-    //Navigation
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation 'androidx.compose.material3:material3:1.0.0-alpha13'
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
+    implementation 'androidx.activity:activity-compose:1.4.0'
 
     //Dagger Hilt
-    implementation "com.google.dagger:hilt-android:2.41"
-    kapt "com.google.dagger:hilt-compiler:2.41"
+    implementation "com.google.dagger:hilt-android:2.42"
+    kapt "com.google.dagger:hilt-compiler:2.42"
     kapt "androidx.hilt:hilt-compiler:1.0.0"
-
-
-    //Scalable Unit Scales
-    implementation 'com.intuit.sdp:sdp-android:1.0.6'
-    implementation 'com.intuit.ssp:ssp-android:1.0.6'
+    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
     //Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
 
     //Lifecycle components
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
@@ -70,20 +73,20 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
 
-    //Firebase
-    implementation platform('com.google.firebase:firebase-bom:29.1.0')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.0.1'
-    implementation 'com.google.firebase:firebase-storage-ktx:20.0.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0'
-
     //Image downloading and Caching library
-    implementation 'com.github.bumptech.glide:glide:4.13.0'
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    kapt 'com.github.bumptech.glide:compiler:4.13.0'
+    kapt 'com.github.bumptech.glide:compiler:4.13.2'
 
     //Exoplayer
-    api "com.google.android.exoplayer:exoplayer-core:2.17.0"
-    api "com.google.android.exoplayer:exoplayer-ui:2.17.0"
-    api "com.google.android.exoplayer:extension-mediasession:2.17.0"
+    api "com.google.android.exoplayer:exoplayer-core:2.17.1"
+    api "com.google.android.exoplayer:exoplayer-ui:2.17.1"
+    api "com.google.android.exoplayer:extension-mediasession:2.17.1"
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 }
