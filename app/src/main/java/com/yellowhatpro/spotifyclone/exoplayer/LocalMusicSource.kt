@@ -56,8 +56,7 @@ class LocalMusicSource @Inject constructor(
             .setSubtitle(song.description.subtitle)
             .build()
         MediaBrowserCompat.MediaItem(desc, FLAG_PLAYABLE)
-
-    }
+    }.toMutableList()
 
     private val onReadyListeners = mutableListOf<(Boolean) -> Unit>()
 
