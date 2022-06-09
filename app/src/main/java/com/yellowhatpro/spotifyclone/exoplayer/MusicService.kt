@@ -3,7 +3,6 @@ package com.yellowhatpro.spotifyclone.exoplayer
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
-import android.provider.Browser
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
