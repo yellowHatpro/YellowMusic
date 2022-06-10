@@ -2,6 +2,7 @@ package com.yellowhatpro.spotifyclone.di
 
 import android.content.Context
 import android.support.v4.media.MediaMetadataCompat
+import android.util.Log
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
@@ -16,6 +17,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
+import kotlinx.coroutines.Dispatchers
 
 @Module
 @InstallIn(ServiceComponent::class)

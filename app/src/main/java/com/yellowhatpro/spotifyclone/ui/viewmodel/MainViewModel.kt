@@ -12,22 +12,24 @@ import com.yellowhatpro.spotifyclone.exoplayer.isPlaying
 import com.yellowhatpro.spotifyclone.exoplayer.isPrepared
 import com.yellowhatpro.spotifyclone.other.Constants.MEDIA_ROOT_ID
 import com.yellowhatpro.spotifyclone.utils.Resource
+import com.yellowhatpro.spotifyclone.utils.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val musicServiceConnection: MusicServiceConnection
 ) : ViewModel() {
-    private val _mediaItems = MutableLiveData<Resource<List<Song>>>()
-    val mediaItems: LiveData<Resource<List<Song>>> = _mediaItems
-
+    private val _mediaItems = MutableStateFlow<Resource<List<Song>>>(Resource.loading(null))
+    val mediaItems = _mediaItems.asStateFlow()
     val isConnected = musicServiceConnection.isConnected
     val currentlyPlayingSong = musicServiceConnection.currentPlayingSong
     val playbackState = musicServiceConnection.playbackState
 
     init {
-        _mediaItems.postValue(Resource.loading(null))
+        _mediaItems.value = (Resource.loading(null))
         musicServiceConnection.subscribe(
             MEDIA_ROOT_ID,
             object : MediaBrowserCompat.SubscriptionCallback() {
@@ -44,7 +46,7 @@ class MainViewModel @Inject constructor(
                             it.description.mediaUri!!
                         )
                     }
-                    _mediaItems.postValue(Resource.success(items))
+                    _mediaItems.value = (Resource.success(items))
                 }
             })
     }

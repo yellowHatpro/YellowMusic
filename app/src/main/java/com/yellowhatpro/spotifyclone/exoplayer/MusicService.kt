@@ -7,6 +7,7 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import androidx.media.MediaBrowserServiceCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
@@ -36,8 +37,8 @@ class MusicService : MediaBrowserServiceCompat() {
 
     private lateinit var musicNotificationManager: MusicNotificationManager
 
-    private val serviceJob = Job()
-    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
+    private val serviceJob = SupervisorJob()
+    private val serviceScope = CoroutineScope(Dispatchers.Main+ serviceJob )
 
     private lateinit var mediaSession : MediaSessionCompat
     private lateinit var mediaSessionConnector : MediaSessionConnector
@@ -57,9 +58,10 @@ class MusicService : MediaBrowserServiceCompat() {
         super.onCreate()
         serviceScope.launch {
             localMusicSource.fetchMediaData()
+
         }
         val activityIntent = packageManager?.getLaunchIntentForPackage(packageName)?.let {
-            PendingIntent.getActivity(this, 0, it, 0)
+            PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
         mediaSession = MediaSessionCompat(this,SERVICE_TAG).apply {
             setSessionActivity(activityIntent)
@@ -134,11 +136,14 @@ class MusicService : MediaBrowserServiceCompat() {
         songs: List<MediaMetadataCompat>,
         itemToPlay: MediaMetadataCompat?,
         playNow: Boolean
-    ){
-        val currentSongIndex = if (currentSong == null) 0 else songs.indexOf(itemToPlay)
-        exoPlayer.prepare(localMusicSource.asMediaSource(dataSourceFactory))
-        exoPlayer.seekTo(currentSongIndex,0L)
-        exoPlayer.playWhenReady = playNow
+    ) {
+        serviceScope.launch(Dispatchers.Main) {
+            val currentSongIndex = if (currentSong == null) 0 else songs.indexOf(itemToPlay)
+            exoPlayer.setMediaSource(localMusicSource.asMediaSource(dataSourceFactory))
+            exoPlayer.prepare()
+            exoPlayer.seekTo(currentSongIndex, 0L)
+            exoPlayer.playWhenReady = playNow
+        }
     }
 
     private inner class MusicQueueNavigator: TimelineQueueNavigator(mediaSession) {
