@@ -1,10 +1,7 @@
 package com.yellowhatpro.spotifyclone.di
 
 import android.content.Context
-import com.yellowhatpro.spotifyclone.data.local.SongRepository
 import com.yellowhatpro.spotifyclone.data.local.SongsData
-
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

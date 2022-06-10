@@ -25,19 +25,19 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var glide:RequestManager
+    lateinit var glide: RequestManager
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SpotifyCloneTheme {
-              Surface(
-                  modifier = Modifier.fillMaxSize(),
-                  color = MaterialTheme.colorScheme.background
-              ) {
-                  ShowAlbums()
-
-              }
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    ShowAlbums()
+                }
             }
         }
     }

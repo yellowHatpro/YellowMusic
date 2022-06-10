@@ -2,8 +2,6 @@ package com.yellowhatpro.spotifyclone.ui.viewmodel
 
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.yellowhatpro.spotifyclone.data.entities.Song
 import com.yellowhatpro.spotifyclone.exoplayer.MusicServiceConnection
@@ -12,7 +10,6 @@ import com.yellowhatpro.spotifyclone.exoplayer.isPlaying
 import com.yellowhatpro.spotifyclone.exoplayer.isPrepared
 import com.yellowhatpro.spotifyclone.other.Constants.MEDIA_ROOT_ID
 import com.yellowhatpro.spotifyclone.utils.Resource
-import com.yellowhatpro.spotifyclone.utils.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,8 +22,8 @@ class MainViewModel @Inject constructor(
     private val _mediaItems = MutableStateFlow<Resource<List<Song>>>(Resource.loading(null))
     val mediaItems = _mediaItems.asStateFlow()
     val isConnected = musicServiceConnection.isConnected
-    val currentlyPlayingSong = musicServiceConnection.currentPlayingSong
-    val playbackState = musicServiceConnection.playbackState
+    private val currentlyPlayingSong = musicServiceConnection.currentPlayingSong
+    private val playbackState = musicServiceConnection.playbackState
 
     init {
         _mediaItems.value = (Resource.loading(null))
@@ -83,8 +80,9 @@ class MainViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        musicServiceConnection.unsubscribe(MEDIA_ROOT_ID,object: MediaBrowserCompat.SubscriptionCallback() {
+        musicServiceConnection.unsubscribe(MEDIA_ROOT_ID,
+            object : MediaBrowserCompat.SubscriptionCallback() {
 
-        })
+            })
     }
 }
