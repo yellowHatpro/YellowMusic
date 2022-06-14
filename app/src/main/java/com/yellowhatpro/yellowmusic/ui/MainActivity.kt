@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.RequestManager
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
 import com.yellowhatpro.yellowmusic.theme.SpotifyCloneTheme
 import com.yellowhatpro.yellowmusic.ui.viewmodel.MainViewModel
 import com.yellowhatpro.yellowmusic.utils.Status
@@ -43,20 +45,37 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
 fun ShowAlbums() {
     val viewModel = hiltViewModel<MainViewModel>()
     val songList = viewModel.mediaItems.collectAsState().value
-    when (songList.status){
-            Status.LOADING -> {
-                Text(text = "ff")
-            }
-        else   -> Text(text = "Ddddd")
+    when (songList.status) {
+        Status.LOADING -> {
+            Text(text = "ff")
+        }
+        else -> Text(text = "Ddddd")
     }
-    Scaffold {
-        LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 128.dp)) {
+    Scaffold(bottomBar = {
+        songList.data?.let {
+
+            HorizontalPager(count = it.size) { page ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                ) {
+                    Text(text = it[page].title)
+                }
+            }
+        }
+    }) { innerPadding ->
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 128.dp),
+            modifier = Modifier.padding(innerPadding)
+        ) {
 
             songList.data?.let { it1 ->
                 items(it1.size) {
@@ -66,13 +85,15 @@ fun ShowAlbums() {
                             .width(180.dp)
                             .padding(8.dp),
                         shape = MaterialTheme.shapes.medium,
+                        onClick = {
+                            viewModel.playOrToggleSong(songList.data[it])
+                        }
                     ) {
                         Column {
                             Text(text = songList.data[it].title)
                             Text(text = songList.data[it].artist)
                             //Text(text = albumList[it].albumId.toString())
                         }
-
                     }
                 }
             }
