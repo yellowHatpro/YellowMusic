@@ -8,7 +8,7 @@ import com.yellowhatpro.yellowmusic.exoplayer.MusicServiceConnection
 import com.yellowhatpro.yellowmusic.exoplayer.isPlayEnabled
 import com.yellowhatpro.yellowmusic.exoplayer.isPlaying
 import com.yellowhatpro.yellowmusic.exoplayer.isPrepared
-import com.yellowhatpro.yellowmusic.other.Constants.MEDIA_ROOT_ID
+import com.yellowhatpro.yellowmusic.utils.Constants.MEDIA_ROOT_ID
 import com.yellowhatpro.yellowmusic.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ class MainViewModel @Inject constructor(
     private val _mediaItems = MutableStateFlow<Resource<List<Song>>>(Resource.loading(null))
     val mediaItems = _mediaItems.asStateFlow()
     val isConnected = musicServiceConnection.isConnected
-    private val currentlyPlayingSong = musicServiceConnection.currentPlayingSong
+    val currentlyPlayingSong = musicServiceConnection.currentPlayingSong
     private val playbackState = musicServiceConnection.playbackState
 
     init {
@@ -40,7 +40,7 @@ class MainViewModel @Inject constructor(
                             it.mediaId!!,
                             it.description.title.toString(),
                             it.description.subtitle.toString(),
-                            it.description.mediaUri!!
+                            it.description.mediaUri.toString()
                         )
                     }
                     _mediaItems.value = (Resource.success(items))

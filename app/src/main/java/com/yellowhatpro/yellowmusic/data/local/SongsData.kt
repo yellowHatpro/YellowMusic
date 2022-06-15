@@ -47,7 +47,7 @@ class SongsData (private val context: Context) {
                 val contentUri = ContentUris.withAppendedId(
                     collection,
                     song_id.toLong()
-                )
+                ).toString()
                 songs+= Song(song_id,song_name,artist,contentUri)
             }
         }

@@ -1,7 +1,6 @@
 package com.yellowhatpro.yellowmusic.ui
 
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,12 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.RequestManager
@@ -23,11 +18,12 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.yellowhatpro.yellowmusic.data.entities.Song
 import com.yellowhatpro.yellowmusic.theme.SpotifyCloneTheme
-import com.yellowhatpro.yellowmusic.ui.MainActivity.Companion.currentPlayingSong
+import com.yellowhatpro.yellowmusic.ui.MainActivity.Companion.crntPlayingSong
 import com.yellowhatpro.yellowmusic.ui.viewmodel.MainViewModel
-import com.yellowhatpro.yellowmusic.utils.Status
+import com.yellowhatpro.yellowmusic.utils.Extensions.toSong
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,10 +33,8 @@ class MainActivity : ComponentActivity() {
     lateinit var glide: RequestManager
 
     companion object {
-        var currentPlayingSong : Song? = null
-
+        var crntPlayingSong: Song? = null
     }
-
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +44,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ShowAlbums()
+                    val viewModel = hiltViewModel<MainViewModel>()
+                    ShowAlbums(viewModel)
                 }
             }
         }
@@ -58,20 +53,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @OptIn(ExperimentalPagerApi::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
-fun ShowAlbums() {
-    val viewModel = hiltViewModel<MainViewModel>()
+fun ShowAlbums(viewModel: MainViewModel) {
     val songList = viewModel.mediaItems.collectAsState().value
-    when (songList.status) {
-        Status.LOADING -> {
-            Text(text = "ff")
-        }
-        else -> Text(text = "Ddddd")
-    }
+    val currentPlayingSong = viewModel.currentlyPlayingSong.collectAsState().value
+    crntPlayingSong = currentPlayingSong.toSong
     val pageState = rememberPagerState()
     val scope = rememberCoroutineScope()
+
+
     Scaffold(bottomBar = {
         songList.data?.let {
 
@@ -84,6 +75,22 @@ fun ShowAlbums() {
                     Text(text = it[page].title)
                 }
             }
+        LaunchedEffect(pageState) {
+            snapshotFlow { pageState.currentPage }
+                .distinctUntilChanged()
+                .collect { page->
+
+                if (page>songList.data.indexOf(crntPlayingSong)) {
+                    viewModel.skipToNextSong()
+                    viewModel.playOrToggleSong(songList.data[page])
+                }
+                    else if (page<songList.data.indexOf(crntPlayingSong)) {
+                    viewModel.skipToPrevious()
+                    viewModel.playOrToggleSong(songList.data[page])
+                }
+
+                }
+        }
         }
     }) { innerPadding ->
         LazyVerticalGrid(
@@ -101,10 +108,14 @@ fun ShowAlbums() {
                         shape = MaterialTheme.shapes.medium,
                         onClick = {
                             viewModel.playOrToggleSong(songList.data[it])
-                            currentPlayingSong = songList.data[it]
+                            crntPlayingSong = songList.data[it]
                             scope.launch {
-                                if (currentPlayingSong == null)   pageState.animateScrollToPage(0)
-                                else  pageState.animateScrollToPage(songList.data.indexOf(currentPlayingSong))
+                                if (currentPlayingSong == null) pageState.animateScrollToPage(0)
+                                else pageState.animateScrollToPage(
+                                    songList.data.indexOf(
+                                        crntPlayingSong
+                                    )
+                                )
                             }
                         }
                     ) {

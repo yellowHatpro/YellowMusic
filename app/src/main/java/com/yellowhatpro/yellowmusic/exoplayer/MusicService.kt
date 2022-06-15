@@ -16,8 +16,8 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.yellowhatpro.yellowmusic.exoplayer.callbacks.MusicPlaybackPreparer
 import com.yellowhatpro.yellowmusic.exoplayer.callbacks.MusicPlayerEventListener
 import com.yellowhatpro.yellowmusic.exoplayer.callbacks.MusicPlayerNotificationListener
-import com.yellowhatpro.yellowmusic.other.Constants.MEDIA_ROOT_ID
-import com.yellowhatpro.yellowmusic.other.Constants.SERVICE_TAG
+import com.yellowhatpro.yellowmusic.utils.Constants.MEDIA_ROOT_ID
+import com.yellowhatpro.yellowmusic.utils.Constants.SERVICE_TAG
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
