@@ -9,7 +9,7 @@ import com.yellowhatpro.yellowmusic.data.entities.Song
 class SongsData (private val context: Context) {
 
     private val songs = mutableListOf<Song>()
-    suspend fun fetchSongs(): List<Song> {
+    fun fetchSongs(): List<Song> {
         val collection =
             if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.Q){
                 MediaStore.Audio.Media.getContentUri(

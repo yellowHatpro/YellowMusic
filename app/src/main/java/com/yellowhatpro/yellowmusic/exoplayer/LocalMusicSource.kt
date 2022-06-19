@@ -9,7 +9,7 @@ import androidx.core.net.toUri
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.yellowhatpro.yellowmusic.data.local.SongRepository
 import com.yellowhatpro.yellowmusic.exoplayer.State.*
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +37,7 @@ class LocalMusicSource @Inject constructor(private val songRepository: SongRepos
         state = STATE_INITIALIZED
     }
 
-    override fun asMediaSource(dataSourceFactory: DefaultDataSourceFactory) : ConcatenatingMediaSource{
+    override fun asMediaSource(dataSourceFactory: DefaultDataSource.Factory) : ConcatenatingMediaSource{
         val concatenatingMediaSource = ConcatenatingMediaSource()
         songs.forEach{ song ->
             val mediaItem = MediaItem.fromUri(song.getString(METADATA_KEY_MEDIA_URI))

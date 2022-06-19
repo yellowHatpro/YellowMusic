@@ -4,8 +4,7 @@ import android.content.Context
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
+import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.yellowhatpro.yellowmusic.data.local.SongRepository
 import dagger.Module
 import dagger.Provides
@@ -22,7 +21,7 @@ object ServiceModule {
     @ServiceScoped
     @Provides
     fun provideAudioAttributes() = AudioAttributes.Builder()
-        .setContentType(C.CONTENT_TYPE_MUSIC)
+        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
         .setUsage(C.USAGE_MEDIA)
         .build()
 
@@ -40,7 +39,7 @@ object ServiceModule {
     @Provides
     fun provideDataSourceFactory(
         @ApplicationContext context: Context
-    ) = DefaultDataSourceFactory(context, Util.getUserAgent(context,"Spotify App"))
+    ) = DefaultDataSource.Factory(context)
 
 
     @ServiceScoped

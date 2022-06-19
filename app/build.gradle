@@ -79,9 +79,9 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.13.2'
 
     //Exoplayer
-    api "com.google.android.exoplayer:exoplayer-core:2.17.1"
-    api "com.google.android.exoplayer:exoplayer-ui:2.17.1"
-    api "com.google.android.exoplayer:extension-mediasession:2.17.1"
+    api "com.google.android.exoplayer:exoplayer-core:2.18.0"
+    api "com.google.android.exoplayer:exoplayer-ui:2.18.0"
+    api "com.google.android.exoplayer:extension-mediasession:2.18.0"
 
     //ViewPager
     implementation "com.google.accompanist:accompanist-pager:0.23.0"

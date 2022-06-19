@@ -12,7 +12,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.yellowhatpro.yellowmusic.exoplayer.callbacks.MusicPlaybackPreparer
 import com.yellowhatpro.yellowmusic.exoplayer.callbacks.MusicPlayerEventListener
 import com.yellowhatpro.yellowmusic.exoplayer.callbacks.MusicPlayerNotificationListener
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class MusicService : MediaBrowserServiceCompat() {
 
     @Inject
-    lateinit var dataSourceFactory : DefaultDataSourceFactory
+    lateinit var dataSourceFactory : DefaultDataSource.Factory
 
     @Inject
     lateinit var exoPlayer : ExoPlayer
